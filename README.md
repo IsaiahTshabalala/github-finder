@@ -1,4 +1,4 @@
-# GithubFinder
+# github-finder
 # This React application was done as part of my learning the course REACT FRONT TO BACK by BradTraversy on Udemy.com
 # It basically fetches a list of Github users from the Github Api and displays their information on the React front-end.
 # Bootstrap-5 was used for the CSS.
