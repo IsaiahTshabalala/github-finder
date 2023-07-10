@@ -41,9 +41,7 @@ function User() {
 
   return (
     <div className='m-2 container-fluid'>
-      <div className='m-3'>
-        <NavLink to='/'><h6><span className='text-light'>Back to Search</span></h6></NavLink>
-      </div>
+      <NavLink className='m-3' style={{textDecoration: 'none'}} to='/'><h6><span className='text-light'>Back to Search</span></h6></NavLink>
       <div>
       {(clickedUser !== null)?
         <div className='container-fluid border-0'>
