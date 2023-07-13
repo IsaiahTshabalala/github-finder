@@ -120,14 +120,9 @@ export async function getUserAndRepos(username) {
                                 }
                             };
                        },
-                       errors=> {
-                            console.log(errors);
+                       error=> {
                             success = false;
-                            output = {
-                                status: undefined,
-                                statusText: 'Request not fullfilled'                                
-                            };
-
+                            output = error;
                        });
 
     return success? Promise.resolve(output) : Promise.reject(output);

@@ -43,15 +43,8 @@ function User() {
               },
               error=> {
                   success = false;
-                  if (error.status === 404)
-                      error.statusText = 'Not found';
-                  
-                  error.statusText = (error.status === undefined)?
-                                      'Some error occurred. Please check your connection. Then reload the page.' : error.statusText;
-                  output = {
-                      status: error.status,
-                      statusText: error.statusText
-                  };
+
+                  output = error;
               });
       
       return success? Promise.resolve(output): Promise.reject(output);
