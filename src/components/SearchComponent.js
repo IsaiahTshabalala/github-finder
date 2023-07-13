@@ -1,9 +1,33 @@
 import React, {useState, useContext} from 'react';
 import GithubContext from '../hooks/GithubProvider';
+import { getUsers } from '../actions/githubActions';
 
 function SearchComponent() {
     const [searchText, setSearchText] = useState('');
-    const {searchUsers, clearUsers} = useContext(GithubContext);
+    const {users, githubDispatch} = useContext(GithubContext);
+
+    function clearUsers() {
+        githubDispatch({type: 'CLEAR_USERS'});
+    }
+        
+    async function searchUsers(keyword) {
+        let success = true;
+        let output;
+        
+        githubDispatch({type: 'CLEAR_USERS'});
+        
+        const query = new URLSearchParams(`q=${keyword} in:login&sort=login&order=asc`);
+        await getUsers(query)
+                .then(result=> {
+                    githubDispatch({type: 'SET_USERS', payload: {users: result.json}});
+                    output = {status: result.status, statusText: result.statusText};
+                },
+                error=> {
+                    success = false;
+                    output = error;
+                });
+        return success? Promise.resolve(output) : Promise.reject(output);
+    }
 
     function handleSubmit(e){
         e.preventDefault();

@@ -1,5 +1,6 @@
 import {useContext, useEffect, useState} from 'react';
 import GithubContext from '../hooks/GithubProvider';
+import { getUserRepos } from '../actions/githubActions';
 import {FaLink} from 'react-icons/fa';
 import {AiFillStar, AiFillEye} from 'react-icons/ai';
 import {LuGitFork} from 'react-icons/lu';
@@ -8,21 +9,9 @@ import {BsInfo} from 'react-icons/bs';
 import Alert from './Alert';
 
 function Repos() {
-    const { clickedUser, setClickedUserRepos } = useContext(GithubContext);
+    const { clickedUser } = useContext(GithubContext);
     const [errorGettingRepos, setErrorGettingRepos] = useState(null);
-
-    useEffect(()=>{
-        if (clickedUser.repos === undefined) {
-            setClickedUserRepos()
-            .then(results=> {
-                setErrorGettingRepos(null);
-            },
-            error=> {
-                setErrorGettingRepos(`Error status ${error.status}: ${error.statusText}`);
-            });
-        }
-    }, [clickedUser]);
-
+    // The repos of the clicked user are obtained during the process of setting the clicked user (setClickedUserAndRepos)
 
     return (
         <div className='mt-3'>
@@ -31,7 +20,7 @@ function Repos() {
                     <h5 className='m-2'>Latest repositories</h5>
                     {clickedUser.repos.map(repo=> {
                         return (
-                            <div  key={repo.name} className="card border text-bg-dark border-0  m-2">
+                            <div  key={repo.id} className="card border text-bg-dark border-0  m-2">
                                 <div className="card-body">
                                     <h6  className='card-title'>
                                         <FaLink/><span className='ms-2'>{repo.name}</span>

@@ -1,25 +1,51 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import GithubContext from '../hooks/GithubProvider';
+import { getUsers } from '../actions/githubActions';
 import { useState, useEffect, useContext } from 'react';
 import Spinner from './Spinner';
 import Alert from './Alert';
 
 function GithubUsersList() {
-    const {users, usersLoaded, usersCleared, setUsers} = useContext(GithubContext);
+    const {users, usersLoaded, usersCleared, githubDispatch} = useContext(GithubContext);
     const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
-        // This is needed for when a call to setUsers in the GithubProvider obtained no users.
-        // In this case the error as to the cause must be retrieved and displayed as an alert.
-        if (users.length === 0)
-            setUsers()
-            .then(results=>{ 
-                    setErrorMsg(null);
-                },
-                error=> {                
-                    setErrorMsg(`Error status ${error.status}: ${error.statusText}`);
-                });
+        async function setUsers() {
+            let success = true;
+            let output;
+
+            await getUsers()
+                    .then(results=> {
+                        githubDispatch({type: 'SET_USERS', payload: {users: results.json}}); // Earmark the action for setting users
+                        output = {status: 200, statusText: 'OK'};
+                    },
+                    error=>{
+                        success = false;
+                        output = {
+                            status: error.status,
+                            statusText: (error.status === undefined)?
+                                        'Some error occurred. Please check your connection. Then reload the page.': error.statusText
+                        };
+
+                        if (output.status === 404)
+                            output.statusText = 'Not found.';
+                    });
+
+            // The process of getting of users was executed even in the case where it returned a blank
+            githubDispatch({type: 'SET_USERS_LOADED', payload: {usersLoaded: true}});
+            return success? Promise.resolve(output): Promise.reject(output);
+        }
+    
+        
+        setUsers()
+        .then(results=>{ 
+                setErrorMsg(null);
+            },
+            error=> {                
+                setErrorMsg(`Error status ${error.status}: ${error.statusText}`);
+            });
+
         }, []);
     
     return (

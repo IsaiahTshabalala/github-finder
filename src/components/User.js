@@ -4,13 +4,14 @@ import React, {useContext, useEffect, useState} from 'react';
 import { NavLink } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import GithubContext from '../hooks/GithubProvider';
+import { getUserAndRepos} from '../actions/githubActions';
 import Spinner from './Spinner';
 import Alert from './Alert';
 import Stats from './Stats';
 import Repos from './Repos';
 
 function User() {
-  const {clickedUser, setClickedUser} = useContext(GithubContext);
+  const {clickedUser, githubDispatch} = useContext(GithubContext);
   const {username: parUsername} = useParams();
   const [altDisplay, setAltDisplay] = useState(<Spinner/>);
   
@@ -29,9 +30,35 @@ function User() {
   ];
 
   useEffect(()=> {
-    
+      
+    async function setClickedUserAndRepos(username) {
+      let success = true;
+      let output;
+      await getUserAndRepos(username)
+              .then(results=> {
+                  let user = results.json.user;
+                  user.repos = results.json.userRepos;
+                  githubDispatch({type: 'SET_CLICKED_USER', payload: {clickedUser: user}});
+                  output = {status: 200, statusText: 'OK'};
+              },
+              error=> {
+                  success = false;
+                  if (error.status === 404)
+                      error.statusText = 'Not found';
+                  
+                  error.statusText = (error.status === undefined)?
+                                      'Some error occurred. Please check your connection. Then reload the page.' : error.statusText;
+                  output = {
+                      status: error.status,
+                      statusText: error.statusText
+                  };
+              });
+      
+      return success? Promise.resolve(output): Promise.reject(output);
+  }
+
   async function setUser () {
-    await setClickedUser(parUsername)
+    await setClickedUserAndRepos(parUsername)
       .then(results=> {},
       error=> setAltDisplay(<Alert message={`Error status ${error.status}: ${error.statusText}`}/>));  
   }
