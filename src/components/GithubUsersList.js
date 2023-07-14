@@ -32,7 +32,7 @@ function GithubUsersList() {
                             output.statusText = 'Not found.';
                     });
 
-            // The process of getting of users was executed even in the case where it returned a blank
+            // The process of getting of users was executed even if it returned a blank.
             githubDispatch({type: 'SET_USERS_LOADED', payload: {usersLoaded: true}});
             return success? Promise.resolve(output): Promise.reject(output);
         }

@@ -70,7 +70,7 @@ export async function getUser(username){
                 success = false;
                 output = {
                     status: error.request.status,
-                    statusText: error.message
+                    statusText: error.code
                 }
             });
     return success? Promise.resolve(output) : Promise.reject(output);
@@ -86,8 +86,6 @@ export async function getUserRepos(username) {
     path = `${path}?${searchParams}`;
     await axiosInstance.get(path)
             .then(results=> {
-                const json = results.data;
-
                 output = {
                     status: results.status,
                     statusText: 'OK',
@@ -98,7 +96,7 @@ export async function getUserRepos(username) {
                 success = false;
                 output = {
                     status: error.request.status,
-                    statusText: error.message
+                    statusText: error.code
                 };
             });
 
