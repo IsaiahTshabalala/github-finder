@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+In order to deploy this application, create a file named .env and place the following variables:
+### REACT_APP_GITHUB_API_PATH=https://api.github.com
+### REACT_APP_GITHUB_TOKEN=[Your authentication key]
+
 ## Available Scripts
 
 In the project directory, you can run:
