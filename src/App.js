@@ -5,6 +5,7 @@ import GithubUsersList from './components/GithubUsersList';
 import { GithubProvider } from './hooks/GithubProvider';
 import Errorpage from './components/Errorpage';
 import User from './components/User';
+import About from './components/About';
 import Footer from './components/Footer';
 
 function App() {
@@ -34,6 +35,14 @@ function App() {
                           <Footer/>
                         </>,
               path: '/users/:username'
+            },
+            {
+              element:  <>
+                          <MenuBar/>
+                          <About/>
+                          <Footer/>
+                        </>,
+              path: '/about'
             }
           ])}
         />
