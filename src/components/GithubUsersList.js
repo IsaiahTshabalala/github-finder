@@ -15,6 +15,11 @@ function GithubUsersList() {
             let success = true;
             let output;
 
+             // This is to prevent re-loading the users everytime the user returns to this component,
+             // such as via the back button or the home menu-item.
+            if (usersLoaded) 
+                return;
+
             await getUsers()
                     .then(results=> {
                         githubDispatch({type: 'SET_USERS', payload: {users: results.json}}); // Earmark the action for setting users

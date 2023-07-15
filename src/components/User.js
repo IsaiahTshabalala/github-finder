@@ -34,6 +34,9 @@ function User() {
     async function setClickedUserAndRepos(username) {
       let success = true;
       let output;
+
+      // Clear the previously clicked/selected user.
+      githubDispatch({type: 'CLEAR_CLICKED_USER'});
       await getUserAndRepos(username)
               .then(results=> {
                   let user = results.json.user;
@@ -48,16 +51,16 @@ function User() {
               });
       
       return success? Promise.resolve(output): Promise.reject(output);
-  }
+    }
 
-  async function setUser () {
-    await setClickedUserAndRepos(parUsername)
-      .then(results=> {},
-      error=> setAltDisplay(<Alert message={`Error status ${error.status}: ${error.statusText}`}/>));  
-  }
-  
-  setUser();
-  }, []);
+    async function setUser () {
+      await setClickedUserAndRepos(parUsername)
+        .then(results=> {},
+        error=> setAltDisplay(<Alert message={`Error status ${error.status}: ${error.statusText}`}/>));  
+    }
+    
+    setUser();
+    }, []);
 
   return (
     <div className='m-2 container-fluid'>
