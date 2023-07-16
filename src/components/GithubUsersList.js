@@ -1,61 +1,37 @@
+/* 
+File: ./src/components/GithubUsersList.js
+Purpose: Display list of Github Users.
+Date        Dev        Description
+2023/07/16  ITA        Moved the functionality that fetches Github Users data into the setGetUsersFetch hook, since this is a functionality that
+                       was common, also found in the component ./src/components/SearchComponent.
+*/
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import GithubContext from '../hooks/GithubProvider';
-import { getUsers } from '../actions/githubActions';
+import {useGetUsersFetch} from '../hooks/useGetUsersFetch';
 import { useState, useEffect, useContext } from 'react';
 import Spinner from './Spinner';
 import Alert from './Alert';
 
 function GithubUsersList() {
     const {users, usersLoaded, usersCleared, githubDispatch} = useContext(GithubContext);
-    const [errorMsg, setErrorMsg] = useState(null);
-
-    useEffect(() => {
-        async function setUsers() {
-            let success = true;
-            let output;
-
-             // This is to prevent re-loading the users everytime the user returns to this component,
-             // such as via the back button or the home menu-item.
-            if (usersLoaded) 
-                return;
-
-            await getUsers()
-                    .then(results=> {
-                        githubDispatch({type: 'SET_USERS', payload: {users: results.json}}); // Earmark the action for setting users
-                        output = {status: 200, statusText: 'OK'};
-                    },
-                    error=>{
-                        success = false;
-                        output = {
-                            status: error.status,
-                            statusText: (error.status === undefined)?
-                                        'Some error occurred. Please check your connection. Then reload the page.': error.statusText
-                        };
-
-                        if (output.status === 404)
-                            output.statusText = 'Not found.';
-                    });
-
-            // The process of getting of users was executed even if it returned a blank.
-            githubDispatch({type: 'SET_USERS_LOADED', payload: {usersLoaded: true}});
-            return success? Promise.resolve(output): Promise.reject(output);
-        }
+    const [errorMsg, setErrorMsg] = useState();
+    const [output] = useGetUsersFetch(null, true); 
     
-        
-        setUsers()
-        .then(results=>{ 
-                setErrorMsg(null);
-            },
-            error=> {                
-                setErrorMsg(`Error status ${error.status}: ${error.statusText}`);
-            });
+    useEffect(()=> {
+        if (usersLoaded)
+            return;
 
-        }, []);
+        if (output.users !== undefined) {
+            githubDispatch({type: 'SET_USERS', payload: {users: output.users}});
+        }
+        else if (output.error !== undefined)
+            setErrorMsg(output.error);
+    }, [output]);
     
     return (
         <>            
-            {(errorMsg !== null)?
+            {(errorMsg !== undefined)?
                 <Alert message={errorMsg} />
                 :
                 {usersLoaded}?

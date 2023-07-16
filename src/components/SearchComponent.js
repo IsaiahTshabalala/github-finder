@@ -1,37 +1,29 @@
+/*
+File: ./src/components/SearchComponent.js
+ Purpose: 
+ When ever the end-user types a keyword and hits ENTER or clicks the GO button, search for and updated the state
+ with the Github users returned.
+ Date        Dev    Description
+ 2023/07/16  ITA    The function that fetches Github users (SearchUsers) was made into a useGetUsersFetch custom hook. 
+                    Since it is a common functionality found in found also found in the component ./src/components/GithubUsersList.js
+*/
 import React, {useState, useContext} from 'react';
 import GithubContext from '../hooks/GithubProvider';
-import { getUsers } from '../actions/githubActions';
+import { useGetUsersFetch } from '../hooks/useGetUsersFetch';
 
 function SearchComponent() {
     const [searchText, setSearchText] = useState('');
     const {users, githubDispatch} = useContext(GithubContext);
+    const [output, requestFetch] = useGetUsersFetch(null, false); // No data will be returned here...
 
     function clearUsers() {
         githubDispatch({type: 'CLEAR_USERS'});
-    }
-        
-    async function searchUsers(keyword) {
-        let success = true;
-        let output;
-        
-        githubDispatch({type: 'CLEAR_USERS'});
-        
-        const query = new URLSearchParams(`q=${keyword} in:login&sort=login&order=asc`);
-        await getUsers(query)
-                .then(result=> {
-                    githubDispatch({type: 'SET_USERS', payload: {users: result.json}});
-                    output = {status: result.status, statusText: result.statusText};
-                },
-                error=> {
-                    success = false;
-                    output = error;
-                });
-        return success? Promise.resolve(output) : Promise.reject(output);
-    }
+    }       
 
     function handleSubmit(e){
         e.preventDefault();
-        searchUsers(searchText);
+        requestFetch(searchText); // This enables fetching of users matching the search keywords and updating output object.
+        githubDispatch({type: 'SET_USERS', payload: {users: output.users}});
     }
 
     function clearList(e){
