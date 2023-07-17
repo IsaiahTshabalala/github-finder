@@ -1,27 +1,29 @@
 /* File: useGithubUsersFetch.js
 Description: 
 Custom hooks for fetching Github Users data.
-Date        Description
-2023/07/16  Genesis
+Date        Dev  Version Description
+2023/07/16  ITA  V1.00   Genesis
+2023/07/17  ITA  V1.01   Initialised output to undefined, to make it easier to verify if it has realised the fetched data it was assigned.
+                         Added default parameters to the custom hook and the requestFetch function.
 */
 import { useEffect, useState } from "react";
 import { getUsers } from "../actions/githubActions";
 
 
-export function useGetUsersFetch(aKeyword, getDataNow = true) {
+export function useGetUsersFetch(aKeyword = null, getDataNow = true) {
 /* 
-If you do not desire to get data immediately, such as, for example, when you yet to know what 
-the search keyword is, call this hook with aKeyword = null and getDataNow = false.
-You can then fetch the data at any time by call requestFetch later, with or without the keyword argument.
+If you do not desire to get data immediately, such as, for example, when you are yet to know what 
+the search keyword is, call this hook with arguments aKeyword = null and getDataNow = false.
+You can then fetch the data at any time by calling requestFetch later, with or without the arguments.
 This will then fetch Github users data and set output object.
  */
-    const [output, setOutput] = useState({});
+    const [output, setOutput] = useState();
     const [keyword, setKeyword] = useState(aKeyword);
     const [getNow, setGetNow] = useState(getDataNow);
 
-    function requestFetch(parKeyword = null){
+    function requestFetch(parKeyword = null, parGetDataNow = true){
         setKeyword(parKeyword);
-        setGetNow(true);
+        setGetNow(parGetDataNow);
     }
     
     useEffect(()=> {

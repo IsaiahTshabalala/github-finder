@@ -1,9 +1,10 @@
 /* 
 File: ./src/components/GithubUsersList.js
 Purpose: Display list of Github Users.
-Date        Dev        Description
-2023/07/16  ITA        Moved the functionality that fetches Github Users data into the setGetUsersFetch hook, since this is a functionality that
-                       was common, also found in the component ./src/components/SearchComponent.
+Date        Dev        Version  Description
+2023/07/16  ITA        V1.00    Moved the functionality that fetches Github Users data into the setGetUsersFetch hook, since this is a functionality that
+                                was common, also found in the component ./src/components/SearchComponent.
+2023/07/17  ITA        V1.01    Added code to ensure that output is defined before making use of it.
 */
 import React from 'react';
 import { NavLink } from 'react-router-dom';
@@ -16,10 +17,12 @@ import Alert from './Alert';
 function GithubUsersList() {
     const {users, usersLoaded, usersCleared, githubDispatch} = useContext(GithubContext);
     const [errorMsg, setErrorMsg] = useState();
-    const [output] = useGetUsersFetch(null, true); 
+    const [output] = useGetUsersFetch(null, true);
     
     useEffect(()=> {
         if (usersLoaded)
+            return;
+        if (output === undefined)
             return;
 
         if (output.users !== undefined) {
@@ -27,7 +30,7 @@ function GithubUsersList() {
         }
         else if (output.error !== undefined)
             setErrorMsg(output.error);
-    }, [output]);
+    }, [output]); // The useEffect will run until the fetched data is realised in output.
     
     return (
         <>            
