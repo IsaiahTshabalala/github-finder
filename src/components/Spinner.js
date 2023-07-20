@@ -1,4 +1,3 @@
-import spinnerImg from '../assets/images/Spinner.png';
 function Spinner() {
 
     return (
