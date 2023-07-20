@@ -1,3 +1,8 @@
+/**
+ File: ./src/components/Spinner.js
+ Date       Dev  Version  Patch
+ 2023/07/20 ITA  1.01     Remove import of Spinner.png as it is no longer used.
+ */
 function Spinner() {
 
     return (
